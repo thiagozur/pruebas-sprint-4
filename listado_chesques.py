@@ -221,8 +221,6 @@ def dispscreen():
 def expcsv(state=None, rang=None):  
     checkn = 0
     indicesdni = [i for i, x in enumerate(dnis) if x == dni]
-    if indicesdni == []:
-        salir("No existe ningún cheque asociado a este DNI")
     typeindex = [i for i, x in enumerate(tipos) if x == tipo]
     resultindex = [i for i in typeindex if i in indicesdni] 
     if resultindex == []:
@@ -250,6 +248,6 @@ if dni in dnis:
             expcsv()
         print("archivo creado")
 else:
-    salir("DNI inexistente")
+    salir("No existe ningún cheque asociado a este DNI")
 
 csvfile.close()
