@@ -1,0 +1,4 @@
+<> indican reemplazar por dato. Ej.: <DNI> podría reemplazarse por 11546322
+* indica argumento opcional
+
+python3 listado_chesques.py prueba1.csv <DNI> <SALIDA="CSV" o "PANTALLA"> <TIPO="EMITIDO" o "DEPOSITADO"> *<ESTADO="PENDIENTE", "APROBADO" o "RECHAZADO"> <RANGO DE FECHA="dd-mm-aaaa:DD-MM-AAAA">
