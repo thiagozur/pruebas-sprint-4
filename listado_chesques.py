@@ -183,10 +183,6 @@ if estado and estado not in estadosv:
 if rango and (not isrango(rango)):
     salir("Rango de fecha inadecuado")
 
-#print(f"Archivo CSV: {csv}\nDNI: {dni}\nFormato de salida: {salida}\nTipo de cheque: {tipo}\nEstado del cheque: {estado}\nRango de fecha: {rango}")
-#print("")
-#print("")
-
 csvfile = open(f"./{csv}")
 cheques = []
 bancos = []
@@ -225,16 +221,17 @@ def dispscreen():
 def expcsv(state=None, rang=None):  
     checkn = 0
     indicesdni = [i for i, x in enumerate(dnis) if x == dni]
+    if indicesdni == []:
+        salir("No existe ningún cheque asociado a este DNI")
     typeindex = [i for i, x in enumerate(tipos) if x == tipo]
     resultindex = [i for i in typeindex if i in indicesdni] 
     if resultindex == []:
-        salir("Ningún cheque de este tipo existe para este DNI")
+        salir("Este DNI no tiene ningún cheque de este tipo asociado")
     if state:
         stateindex = [i for i, x in enumerate(estados) if x == state]
         resultindex = [i for i in resultindex if i in stateindex]
-        print("resultstate", resultindex)
         if resultindex == []:
-            salir("Ningún cheque en este estado existe para este DNI")
+            salir(f"Este DNI no tiene ningún cheque de este tipo asociado que se encuentre {estado}")
     fechahora = str(datetime.datetime.now()).split('.')[0].replace(":", ",")
     arc = open(f".\\csv_exportados\\DNI_{dnis[resultindex[0]]} TIMESTAMP_{fechahora}.csv", 'w')
     arc.writelines(f"Cheque,Fecha de emision,Fecha de pago/cobro,Valor del cheque,Numero de cuenta\n")
