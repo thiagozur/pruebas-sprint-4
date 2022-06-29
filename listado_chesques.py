@@ -190,6 +190,7 @@ if rango and (not isrango(rango)):
 csvfile = open(f"./{csv}")
 cheques = []
 bancos = []
+sucursales = []
 origenes = []
 destinos = []
 valores = []
@@ -201,8 +202,9 @@ tipos = []
 
 for linea in csvfile:
     linedatalist = linea.replace("\n", "").split(",")
-    cheques.append(linedatalist[1])
-    bancos.append(linedatalist[2])
+    cheques.append(linedatalist[0])
+    bancos.append(linedatalist[1])
+    sucursales.append(linedatalist[2])
     origenes.append(linedatalist[3])
     destinos.append(linedatalist[4])
     valores.append(linedatalist[5])
