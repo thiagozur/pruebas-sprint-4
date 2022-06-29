@@ -1,0 +1,1 @@
+Para poder exportar la información a un archivo CSV, debe crearse una carpeta llamada csv_exportados en la misma carpeta en la que se descarguen estos archivos; los CSV exportados se guardarán allí
