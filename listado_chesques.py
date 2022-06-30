@@ -250,7 +250,7 @@ def expcsv(state=None, rang=None):
     checkn = 0
     resultindex = makeindex(state, rang)
     fechahora = str(datetime.datetime.now()).split('.')[0].replace(":", ",")
-    arc = open(f".\\csv_exportados\\DNI_{dnis[resultindex[0]]} TIMESTAMP_{fechahora}.csv", 'w')
+    arc = open(f".\\csv_exportados\\DNI_{dnis[resultindex[0]]} TIMESTAMP_{int(datetime.datetime.now().timestamp())}.csv", 'w')
     arc.writelines(f"Cheque,Fecha de emision,Fecha de pago/cobro,Valor del cheque,Numero de cuenta\n")
     for i in resultindex:
         checkn = checkn + 1
