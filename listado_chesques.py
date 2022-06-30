@@ -206,9 +206,10 @@ for linea in csvfile:
     estados.append(linedatalist[9])
     tipos.append(linedatalist[10])
 
-rangedates = rango.split(":")
-datefrom = datetime.datetime.strptime(rangedates[0], "%d-%m-%Y")#.strftime('%d-%m-%Y')
-dateto = datetime.datetime.strptime(rangedates[1], "%d-%m-%Y")#.strftime('%d-%m-%Y')
+if rango:
+    rangedates = rango.split(":")
+    datefrom = datetime.datetime.strptime(rangedates[0], "%d-%m-%Y")#.strftime('%d-%m-%Y')
+    dateto = datetime.datetime.strptime(rangedates[1], "%d-%m-%Y")#.strftime('%d-%m-%Y')
 
 def makeindex(state=None, rang=None):
     indicesdni = [i for i, x in enumerate(dnis) if x == dni]
