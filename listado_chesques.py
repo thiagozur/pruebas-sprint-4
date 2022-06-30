@@ -210,12 +210,16 @@ for linea in csvfile:
     estados.append(linedatalist[9])
     tipos.append(linedatalist[10])
 
+rangedates = rango.split(":")
+datefrom = datetime.datetime.strptime(rangedates[0], "%d-%m-%Y").strftime('%d-%m-%Y')
+dateto = datetime.datetime.strptime(rangedates[1], "%d-%m-%Y").strftime('%d-%m-%Y')
+
 def dispscreen():
     checkn = 0
     indices = [i for i, x in enumerate(dnis) if x == dni]
     for i in indices:
         checkn = checkn + 1
-        print(f'Cheque {checkn}:\nFecha de emisión: {fechaso[i]}\nFecha de pago/cobro: {fechasp[i]}\nValor del cheque: {valores[i]}\nNúmero de cuenta: {origenes[i]}')
+        print(f'Cheque {checkn}:\nFecha de emisión: {datetime.datetime.fromtimestamp(int(fechaso[i])).strftime("%d-%m-%Y")}\nFecha de pago/cobro: {datetime.datetime.fromtimestamp(int(fechasp[i])).strftime("%d-%m-%Y")}\nValor del cheque: {valores[i]}\nNúmero de cuenta: {origenes[i]}')
         print("")
 
 def expcsv(state=None, rang=None):  
@@ -230,12 +234,23 @@ def expcsv(state=None, rang=None):
         resultindex = [i for i in resultindex if i in stateindex]
         if resultindex == []:
             salir(f"Este DNI no tiene ningún cheque de este tipo asociado que se encuentre {estado}")
+    if rang:
+        if tipo == "EMITIDO":
+            rangindex = [i for i, x in enumerate(fechaso) if datefrom <= datetime.datetime.fromtimestamp(int(x)).strftime("%d-%m-%Y") >= dateto]
+            resultindex = [i for i in resultindex if i in rangindex]
+            if resultindex == []:
+                salir(f"Este DNI no tiene ningún cheque de este tipo asociado que se encuentre en este rango de fecha")
+        elif tipo == "DEPOSITADO":
+            rangindex = [i for i, x in enumerate(fechasp) if datefrom <= datetime.datetime.fromtimestamp(int(x)).strftime("%d-%m-%Y") >= dateto]
+            resultindex = [i for i in resultindex if i in rangindex]
+            if resultindex == []:
+                salir(f"Este DNI no tiene ningún cheque de este tipo asociado que se encuentre en este rango de fecha")
     fechahora = str(datetime.datetime.now()).split('.')[0].replace(":", ",")
     arc = open(f".\\csv_exportados\\DNI_{dnis[resultindex[0]]} TIMESTAMP_{fechahora}.csv", 'w')
     arc.writelines(f"Cheque,Fecha de emision,Fecha de pago/cobro,Valor del cheque,Numero de cuenta\n")
     for i in resultindex:
         checkn = checkn + 1
-        arc.writelines(f"{checkn},{fechaso[i]},{fechasp[i]},{valores[i]},{origenes[i]}\n")
+        arc.writelines(f"{checkn},{datetime.datetime.fromtimestamp(int(fechaso[i])).strftime('%d-%m-%Y')},{datetime.datetime.fromtimestamp(int(fechasp[i])).strftime('%d-%m-%Y')},{valores[i]},{origenes[i]}\n")
     arc.close()
 
 if dni in dnis:
