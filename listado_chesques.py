@@ -248,31 +248,7 @@ def dispscreen(state=None, rang=None):
 
 def expcsv(state=None, rang=None):  
     checkn = 0
-    indicesdni = [i for i, x in enumerate(dnis) if x == dni]
-    typeindex = [i for i, x in enumerate(tipos) if x == tipo]
-    resultindex = [i for i in typeindex if i in indicesdni] 
-    if resultindex == []:
-        salir("Este DNI no tiene ningún cheque de este tipo asociado")
-    if state:
-        stateindex = [i for i, x in enumerate(estados) if x == state]
-        resultindex = [i for i in resultindex if i in stateindex]
-        if resultindex == []:
-            salir(f"Este DNI no tiene ningún cheque de este tipo asociado que se encuentre {estado}")
-    if rang:
-        if tipo == "EMITIDO":
-            fechaso.pop(0)
-            rangindex = [i+1 for i, x in enumerate(fechaso) if datefrom <= datetime.datetime.fromtimestamp(int(x)) <= dateto]
-            resultindex = [i for i in resultindex if i in rangindex]
-            if resultindex == []:
-                salir("Este DNI no tiene ningún cheque de este tipo asociado que se encuentre en este rango de fecha")
-        elif tipo == "DEPOSITADO":
-            fechasp.pop(0)
-            print(fechasp)
-            rangindex = [i+1 for i, x in enumerate(fechasp) if datefrom <= datetime.datetime.fromtimestamp(int(x)) <= dateto]
-            print(rangindex)
-            resultindex = [i for i in resultindex if i in rangindex]
-            if resultindex == []:
-                salir("Este DNI no tiene ningún cheque de este tipo asociado que se encuentre en este rango de fecha")
+    resultindex = makeindex(state, rang)
     fechahora = str(datetime.datetime.now()).split('.')[0].replace(":", ",")
     arc = open(f".\\csv_exportados\\DNI_{dnis[resultindex[0]]} TIMESTAMP_{fechahora}.csv", 'w')
     arc.writelines(f"Cheque,Fecha de emision,Fecha de pago/cobro,Valor del cheque,Numero de cuenta\n")
