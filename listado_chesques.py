@@ -119,10 +119,6 @@ def isrango(a):
     else:
         return False
 
-def checkotherwrong(a, f):
-    if a and (not f(a)):
-        return True
-
 if len(sys.argv) < 5 or len(sys.argv) > 7:
     salir("Cantidad de parámetros inadecuada")
 
@@ -211,19 +207,10 @@ for linea in csvfile:
     tipos.append(linedatalist[10])
 
 rangedates = rango.split(":")
-datefrom = datetime.datetime.strptime(rangedates[0], "%d-%m-%Y").strftime('%d-%m-%Y')
-dateto = datetime.datetime.strptime(rangedates[1], "%d-%m-%Y").strftime('%d-%m-%Y')
+datefrom = datetime.datetime.strptime(rangedates[0], "%d-%m-%Y")#.strftime('%d-%m-%Y')
+dateto = datetime.datetime.strptime(rangedates[1], "%d-%m-%Y")#.strftime('%d-%m-%Y')
 
-def dispscreen():
-    checkn = 0
-    indices = [i for i, x in enumerate(dnis) if x == dni]
-    for i in indices:
-        checkn = checkn + 1
-        print(f'Cheque {checkn}:\nFecha de emisión: {datetime.datetime.fromtimestamp(int(fechaso[i])).strftime("%d-%m-%Y")}\nFecha de pago/cobro: {datetime.datetime.fromtimestamp(int(fechasp[i])).strftime("%d-%m-%Y")}\nValor del cheque: {valores[i]}\nNúmero de cuenta: {origenes[i]}')
-        print("")
-
-def expcsv(state=None, rang=None):  
-    checkn = 0
+def makeindex(state=None, rang=None):
     indicesdni = [i for i, x in enumerate(dnis) if x == dni]
     typeindex = [i for i, x in enumerate(tipos) if x == tipo]
     resultindex = [i for i in typeindex if i in indicesdni] 
@@ -236,29 +223,57 @@ def expcsv(state=None, rang=None):
             salir(f"Este DNI no tiene ningún cheque de este tipo asociado que se encuentre {estado}")
     if rang:
         if tipo == "EMITIDO":
-            rangindex = [i for i, x in enumerate(fechaso) if datefrom <= datetime.datetime.fromtimestamp(int(x)).strftime("%d-%m-%Y") >= dateto]
+            fechaso.pop(0)
+            rangindex = [i+1 for i, x in enumerate(fechaso) if datefrom <= datetime.datetime.fromtimestamp(int(x)) <= dateto]
             resultindex = [i for i in resultindex if i in rangindex]
             if resultindex == []:
-                salir(f"Este DNI no tiene ningún cheque de este tipo asociado que se encuentre en este rango de fecha")
+                salir("Este DNI no tiene ningún cheque de este tipo asociado que se encuentre en este rango de fecha")
         elif tipo == "DEPOSITADO":
-            rangindex = [i for i, x in enumerate(fechasp) if datefrom <= datetime.datetime.fromtimestamp(int(x)).strftime("%d-%m-%Y") >= dateto]
+            fechasp.pop(0)
+            print(fechasp)
+            rangindex = [i+1 for i, x in enumerate(fechasp) if datefrom <= datetime.datetime.fromtimestamp(int(x)) <= dateto]
+            print(rangindex)
             resultindex = [i for i in resultindex if i in rangindex]
             if resultindex == []:
-                salir(f"Este DNI no tiene ningún cheque de este tipo asociado que se encuentre en este rango de fecha")
+                salir("Este DNI no tiene ningún cheque de este tipo asociado que se encuentre en este rango de fecha")
+    return resultindex
+
+def dispscreen(state=None, rang=None):
+    checkn = 0
+    resultindex = makeindex(state, rang)
+    for i in resultindex:
+        checkn = checkn + 1
+        print(f'Cheque {checkn}:\nFecha de emisión: {datetime.datetime.fromtimestamp(int(fechaso[i-1])).strftime("%d-%m-%Y")}\nFecha de pago/cobro: {datetime.datetime.fromtimestamp(int(fechasp[i-1])).strftime("%d-%m-%Y")}\nValor del cheque: {valores[i]}\nNúmero de cuenta: {origenes[i]}')
+        print("")
+
+def expcsv(state=None, rang=None):  
+    checkn = 0
+    resultindex = makeindex(state, rang)
     fechahora = str(datetime.datetime.now()).split('.')[0].replace(":", ",")
     arc = open(f".\\csv_exportados\\DNI_{dnis[resultindex[0]]} TIMESTAMP_{fechahora}.csv", 'w')
     arc.writelines(f"Cheque,Fecha de emision,Fecha de pago/cobro,Valor del cheque,Numero de cuenta\n")
     for i in resultindex:
         checkn = checkn + 1
-        arc.writelines(f"{checkn},{datetime.datetime.fromtimestamp(int(fechaso[i])).strftime('%d-%m-%Y')},{datetime.datetime.fromtimestamp(int(fechasp[i])).strftime('%d-%m-%Y')},{valores[i]},{origenes[i]}\n")
+        arc.writelines(f"{checkn},{datetime.datetime.fromtimestamp(int(fechaso[i-1])).strftime('%d-%m-%Y')},{datetime.datetime.fromtimestamp(int(fechasp[i-1])).strftime('%d-%m-%Y')},{valores[i]},{origenes[i]}\n")
     arc.close()
 
 if dni in dnis:
     if salida == "PANTALLA":
-        dispscreen()
+        if estado and rango:
+            dispscreen(state=estado, rang=rango)
+        elif estado and not rango:
+            dispscreen(state=estado)
+        elif rango and not estado:
+            dispscreen(rang=rango)
+        else:
+            dispscreen()
     elif salida == "CSV":
-        if estado:
+        if estado and rango:
+            expcsv(state=estado, rang=rango)
+        elif estado and not rango:
             expcsv(state=estado)
+        elif rango and not estado:
+            expcsv(rang=rango)
         else:
             expcsv()
         print("archivo creado")
