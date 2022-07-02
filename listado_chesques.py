@@ -322,9 +322,7 @@ def makeindex(state=None, rang=None):
                 salir("Este DNI no tiene ningún cheque de este tipo asociado que se encuentre en este rango de fecha")
         elif tipo == "DEPOSITADO":
             fechasp.pop(0)
-            print(fechasp)
             rangindex = [i+1 for i, x in enumerate(fechasp) if datefrom <= datetime.datetime.fromtimestamp(int(x)) <= dateto]
-            print(rangindex)
             resultindex = [i for i in resultindex if i in rangindex]
             if resultindex == []:
                 salir("Este DNI no tiene ningún cheque de este tipo asociado que se encuentre en este rango de fecha")
