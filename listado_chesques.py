@@ -248,7 +248,11 @@ if estado and estado not in estadosv:
 if rango and (not isrango(rango)):
     salir("Rango de fecha inadecuado")
 
-csvfile = open(f"./{csv}")
+try:
+    csvfile = open(f"./{csv}")
+except:
+    salir("El archivo no existe o no está en la misma carpeta que el programa")
+    
 cheques = []
 bancos = []
 sucursales = []
